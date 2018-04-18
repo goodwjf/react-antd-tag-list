@@ -1,11 +1,11 @@
 .box {
   border: 1px solid #ddd;
-  overflow-y: hidden;
+  overflow-y: auto;
   padding: 5px;
   input {
     display: block;
     margin: 0;
-  } 
+  }
 }
 
 .my-tag {
@@ -41,7 +41,7 @@
 .icon-action {
   position: absolute;
   right: 5px;
-  top: 5px; 
+  top: 5px;
   cursor: pointer;
   &:hover {
     color: #000;
