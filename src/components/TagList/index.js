@@ -114,10 +114,11 @@ export default class Tasks extends Component {
       <div>
         <Input
           style={{ width }}
-          onPressEnter={this.handleInputSearch}
+          onChange={this.handleInputSearch}
           ref={this.searchInputRef}
           type="text"
           size="small"
+          placeholder='输入关键词搜索'
         />
         <div className={css.box} style={{width, height}}>
           {tags.map((tag, index) => {
