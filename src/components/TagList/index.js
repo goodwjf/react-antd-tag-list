@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Tag, Input, Tooltip, Icon, Modal } from 'antd';
+import { Tag, Input, Tooltip, Icon, Modal, Pagination } from 'antd';
 import css from './index.scss'
 const confirm = Modal.confirm;
 
@@ -28,10 +28,15 @@ let MyTag = (props) => {
 
 export default class Tasks extends Component {
   state = {
-    tags: this.props.data,
+    data: this.props.data,
+    tags: [],
     inputVisible: false,
     inputValue: '',
   };
+
+  componentDidMount() {
+    this.setState({tags: this.state.data})
+  }
 
   handleClose = (e) => {
     let removedTag = e.target.parentNode.textContent
@@ -42,7 +47,8 @@ export default class Tasks extends Component {
       okText: '是',
       onOk: () => {
         const tags = this.state.tags.filter(tag => tag !== removedTag);
-        this.setState({ tags }, () => {
+        const data = this.state.data.filter(tag => tag !== removedTag);
+        this.setState({ tags, data }, () => {
           this.selectedTagNode && this.selectedTagNode.classList.add(css['tag-selected'])
         });
         this.props.onRemoved(removedTag, tags)
@@ -72,61 +78,86 @@ export default class Tasks extends Component {
     const state = this.state;
     const inputValue = state.inputValue;
     let tags = state.tags;
+    let data = state.data;
+    if (inputValue && data.indexOf(inputValue) === -1) {
+      data = [...data, inputValue];
+    }
     if (inputValue && tags.indexOf(inputValue) === -1) {
       tags = [...tags, inputValue];
       this.props.onAdd(inputValue, tags)
     }
     this.setState({
+      data,
       tags,
       inputVisible: false,
       inputValue: '',
     });
   }
 
+  handleInputSearch = (e) => {
+    let val = e.target.value
+    let tags = this.state.data
+    if (val) {
+      tags = tags.filter((item) => {
+        return item.indexOf(val) !== -1
+      })
+    }
+    this.setState({tags})
+  }
+  searchInputRef = input => this.searchInput = input
   saveInputRef = input => this.input = input
 
   render() {
     const { tags, inputVisible, inputValue } = this.state
-    const { width, height } = this.props
+    const { width, height, pageSize, plusName } = this.props
     return (
-      <div className={css.box} style={{width, height}}>
-        {tags.map((tag, index) => {
-          const isLongTag = tag.length > 20;
-          const tagElem = (
-            <MyTag 
-              key={tag}
+      <div>
+        <Input
+          style={{ width }}
+          onPressEnter={this.handleInputSearch}
+          ref={this.searchInputRef}
+          type="text"
+          size="small"
+        />
+        <div className={css.box} style={{width, height}}>
+          {tags.map((tag, index) => {
+            const isLongTag = tag.length > 20;
+            const tagElem = (
+              <MyTag 
+                key={tag}
+                icon={{
+                  type: 'close',
+                  event: this.handleClose
+                }}
+                onClick = {this.handleSelected}
+              >
+                {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+              </MyTag>
+            );
+            return isLongTag ? <Tooltip title={tag} key={tag}>{tagElem}</Tooltip> : tagElem;
+          })}
+          {inputVisible && (
+            <Input
+              ref={this.saveInputRef}
+              type="text"
+              size="small"
+              value={inputValue}
+              onChange={this.handleInputChange}
+              onBlur={this.handleInputConfirm}
+              onPressEnter={this.handleInputConfirm}
+            />
+          )}
+          {!inputVisible && (
+            <MyTag
               icon={{
-                type: 'close',
-                event: this.handleClose
+                type:'plus'
               }}
-              onClick = {this.handleSelected}
+              onClick={this.showInput}
             >
-              {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+              {plusName}
             </MyTag>
-          );
-          return isLongTag ? <Tooltip title={tag} key={tag}>{tagElem}</Tooltip> : tagElem;
-        })}
-        {inputVisible && (
-          <Input
-            ref={this.saveInputRef}
-            type="text"
-            size="small"
-            value={inputValue}
-            onChange={this.handleInputChange}
-            onBlur={this.handleInputConfirm}
-            onPressEnter={this.handleInputConfirm}
-          />
-        )}
-        {!inputVisible && (
-          <MyTag
-            icon={{
-              type:'plus'
-            }}
-            onClick={this.showInput}
-          >
-            {this.props.plusName}
-          </MyTag>
-        )}
+          )}
+        </div>
       </div>
     );
   }
