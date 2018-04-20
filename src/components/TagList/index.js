@@ -75,7 +75,7 @@ let MyTag = (props) => {
   )
 }
 
-export default class Tasks extends Component {
+export default class TagList extends Component {
   state = {
     data: [],
     tags: [],
