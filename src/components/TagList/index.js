@@ -89,7 +89,7 @@ export default class Tasks extends Component {
   }
 
   handleClose = (e) => {
-    let removedTag = e.target.textContent
+    let removedTag = e.target.parentNode.textContent
     confirm({
       title: '提示！',
       content: '确认要删除吗？',
