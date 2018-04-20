@@ -2,10 +2,11 @@
   border: 1px solid #ddd;
   overflow-y: auto;
   padding: 5px;
+  margin-bottom: 5px;
   input {
     display: block;
     margin: 0;
-  }
+  } 
 }
 
 .my-tag {
@@ -29,6 +30,7 @@
   opacity: 1;
   white-space: nowrap;
   cursor: pointer;
+  user-select: none;
   &:hover {
     opacity: 0.85;
   }
@@ -41,7 +43,7 @@
 .icon-action {
   position: absolute;
   right: 5px;
-  top: 5px;
+  top: 5px; 
   cursor: pointer;
   &:hover {
     color: #000;
@@ -65,4 +67,8 @@
 
 .tag-selected {
   background-color: #ddd;
+}
+
+.over {
+  border-style: dashed;
 }
